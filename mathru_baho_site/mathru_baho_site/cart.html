@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Your Cart — Mathru Baho</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="nav-wrap">
+    <a href="index.html" class="logo">
+      <svg class="logo-mark" viewBox="0 0 48 48" fill="none"><path d="M24 4 L34 16 L24 44 L14 16 Z" fill="#C79A3D"/><path d="M24 10 L30 18 L24 38 L18 18 Z" fill="#E15B22"/><circle cx="24" cy="16" r="3.4" fill="#FBF4E6"/></svg>
+      <div><span class="logo-text">Mathru Baho</span><span class="logo-sub">Iyengar Spice House</span></div>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="index.html">Our World</a></li>
+        <li><a href="spices.html">Spices</a></li>
+        <li><a href="culture.html">Culture</a></li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="cart.html" class="cart-btn active">🛒 Cart <span class="cart-count" id="navCartCount">0</span></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="gopuram-divider" aria-hidden="true">
+  <svg viewBox="0 0 1200 34" preserveAspectRatio="none">
+    <defs><pattern id="tier" width="60" height="34" patternUnits="userSpaceOnUse">
+      <polygon points="0,34 15,10 30,2 45,10 60,34" fill="#C79A3D"/>
+      <polygon points="15,34 22.5,18 30,14 37.5,18 45,34" fill="#E15B22"/>
+    </pattern></defs>
+    <rect width="1200" height="34" fill="url(#tier)"/>
+  </svg>
+</div>
+
+<section class="page-hero kolam-bg">
+  <div class="breadcrumb"><a href="index.html">Home</a> / Cart</div>
+  <span class="eyebrow">Review &amp; Adjust</span>
+  <h1>Your podi shelf, so far</h1>
+  <p class="lede">Dial in exactly how much of each blend you want — the total updates as you go.</p>
+</section>
+
+<div class="cart-layout">
+  <div class="cart-items" id="cartItems">
+    <!-- injected by JS -->
+  </div>
+
+  <div class="bill-box">
+    <h3>Order Summary</h3>
+    <div class="bill-line"><span>Subtotal</span><span id="billSubtotal">$0.00</span></div>
+    <div class="bill-line"><span>Shipping</span><span id="billShipping">$0.00</span></div>
+    <div class="bill-line"><span>Estimated Tax (7%)</span><span id="billTax">$0.00</span></div>
+    <div class="bill-line total"><span>Total</span><span id="billTotal">$0.00</span></div>
+    <button class="btn" onclick="checkout()">Proceed to Checkout</button>
+    <a href="spices.html" class="btn ghost" style="width:100%; justify-content:center; margin-top:10px;">Continue Shopping</a>
+  </div>
+</div>
+
+<div class="gopuram-divider" aria-hidden="true"><svg viewBox="0 0 1200 34" preserveAspectRatio="none"><rect width="1200" height="34" fill="url(#tier)"/></svg></div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <h4>Mathru Baho</h4>
+      <p>A spice and culture house carrying Iyengar tradition from Tamil Nadu's temple towns to kitchens everywhere. Sattvic, vegetarian, made without onion or garlic — exactly as it always was.</p>
+    </div>
+    <div><h4>Shop</h4><ul><li><a href="spices.html">All Spices</a></li><li><a href="cart.html">Your Cart</a></li></ul></div>
+    <div><h4>Culture</h4><ul><li><a href="culture-philosophy.html">Philosophy</a></li><li><a href="culture-diaspora.html">Diaspora</a></li></ul></div>
+    <div><h4>Stay in Touch</h4><ul><li><a href="newsletter.html">Newsletter</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Mathru Baho. Made with ghee and reverence.</span>
+    <span>Vegetarian · No Onion · No Garlic</span>
+  </div>
+</footer>
+
+<script>
+const PRODUCTS = [
+  {id:'malgapodi', name:'Malgapodi / Idli Podi', sub:'100g tin', price:8.50, img:'images/spice_malgapodi.jpg'},
+  {id:'sambar', name:'Sambar Powder', sub:'100g tin', price:9.00, img:'images/spice_sambar_powder.jpg'},
+  {id:'rasam', name:'Rasam Masala', sub:'100g tin', price:8.50, img:'images/spice_rasam_masala.jpg'},
+  {id:'chettinad', name:'Chettinad Masala', sub:'100g tin', price:9.50, img:'images/spice_chettinad_masala.jpg'},
+  {id:'gassi', name:'Gassi Masala', sub:'100g tin', price:9.75, img:'images/spice_gassi_masala.jpg'},
+  {id:'gheeroast', name:'Ghee Roast Masala', sub:'100g tin', price:9.25, img:'images/spice_ghee_roast_masala.jpg'},
+  {id:'keralagm', name:'Kerala Garam Masala', sub:'100g tin', price:9.00, img:'images/spice_kerala_garam_masala.jpg'},
+  {id:'curryblend', name:'South Indian Curry Powder', sub:'100g tin', price:8.25, img:'images/spice_south_indian_curry_powder.jpg'},
+];
+const PMAP = Object.fromEntries(PRODUCTS.map(p=>[p.id,p]));
+const MAX_QTY = 12;
+const SHIP_FLAT = 4.99;
+const FREE_SHIP_OVER = 45;
+const TAX_RATE = 0.07;
+
+function getCart(){
+  try{ return JSON.parse(localStorage.getItem('mb_cart') || '{}'); }
+  catch(e){ return {}; }
+}
+function saveCart(cart){
+  localStorage.setItem('mb_cart', JSON.stringify(cart));
+  updateNavCount();
+}
+function updateNavCount(){
+  const cart = getCart();
+  const count = Object.values(cart).reduce((a,b)=>a+b, 0);
+  document.getElementById('navCartCount').textContent = count;
+}
+
+function changeQty(id, delta){
+  const cart = getCart();
+  let q = (cart[id] || 0) + delta;
+  q = Math.max(0, Math.min(MAX_QTY, q));
+  if(q === 0){ delete cart[id]; } else { cart[id] = q; }
+  saveCart(cart);
+  render();
+}
+function setQty(id, val){
+  const cart = getCart();
+  let q = parseInt(val, 10);
+  if(isNaN(q) || q < 0) q = 0;
+  q = Math.min(MAX_QTY, q);
+  if(q === 0){ delete cart[id]; } else { cart[id] = q; }
+  saveCart(cart);
+  render();
+}
+function removeItem(id){
+  const cart = getCart();
+  delete cart[id];
+  saveCart(cart);
+  render();
+}
+function checkout(){
+  const cart = getCart();
+  const count = Object.values(cart).reduce((a,b)=>a+b,0);
+  if(count === 0){ alert('Your cart is empty — add a few spice tins first.'); return; }
+  alert('This is a design preview, so checkout isn\\'t wired to real payment yet — but this is exactly where that flow will go.');
+}
+
+function render(){
+  const cart = getCart();
+  const ids = Object.keys(cart);
+  const container = document.getElementById('cartItems');
+
+  if(ids.length === 0){
+    container.innerHTML = `<div class="empty-cart">
+      <p>Your podi shelf is empty.</p>
+      <a href="spices.html" class="btn" style="margin-top:16px;">Browse Spices</a>
+    </div>`;
+  } else {
+    container.innerHTML = ids.map(id => {
+      const p = PMAP[id];
+      const qty = cart[id];
+      const lineTotal = (p.price * qty).toFixed(2);
+      return `
+      <div class="cart-row">
+        <div class="cart-thumb"><img src="${p.img}" alt="${p.name}"></div>
+        <div>
+          <div class="cart-name">${p.name}</div>
+          <div class="cart-sub">${p.sub} · $${p.price.toFixed(2)} each</div>
+          <button class="remove-link" onclick="removeItem('${id}')">Remove</button>
+        </div>
+        <div class="qty-limiter">
+          <button onclick="changeQty('${id}', -1)" ${qty<=0?'disabled':''} aria-label="Decrease quantity">−</button>
+          <input type="text" inputmode="numeric" value="${qty}" onchange="setQty('${id}', this.value)" aria-label="Quantity for ${p.name}">
+          <button onclick="changeQty('${id}', 1)" ${qty>=MAX_QTY?'disabled':''} aria-label="Increase quantity">+</button>
+        </div>
+        <div class="line-total">$${lineTotal}</div>
+      </div>`;
+    }).join('');
+  }
+
+  const subtotal = ids.reduce((sum, id) => sum + PMAP[id].price * cart[id], 0);
+  const shipping = subtotal === 0 ? 0 : (subtotal >= FREE_SHIP_OVER ? 0 : SHIP_FLAT);
+  const tax = subtotal * TAX_RATE;
+  const total = subtotal + shipping + tax;
+
+  document.getElementById('billSubtotal').textContent = '$' + subtotal.toFixed(2);
+  document.getElementById('billShipping').textContent = subtotal === 0 ? '$0.00' : (shipping === 0 ? 'FREE' : '$' + shipping.toFixed(2));
+  document.getElementById('billTax').textContent = '$' + tax.toFixed(2);
+  document.getElementById('billTotal').textContent = '$' + total.toFixed(2);
+
+  updateNavCount();
+}
+
+render();
+</script>
+
+</body>
+</html>
